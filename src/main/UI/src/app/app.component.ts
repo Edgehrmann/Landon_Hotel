@@ -22,6 +22,7 @@ export class AppComponent implements OnInit{
   private getUrl:string = this.baseURL + '/room/reservation/v1/';
   private postUrl:string = this.baseURL + '/room/reservation/v1';
   private welcomeUrl:string = this.baseURL + '/api/welcome';
+  private presentationUrl:string = this.baseURL + '/api/time';
   public submitted!:boolean;
   roomsearch! : FormGroup;
   rooms! : Room[];
@@ -29,12 +30,20 @@ export class AppComponent implements OnInit{
   currentCheckInVal!:string;
   currentCheckOutVal!:string;
   welcomeMessages!: string[];
+  presentationTimes$!: string[];
 
   getWelcome(): Observable<string> {
     return this.httpClient.get<string>(this.welcomeUrl, {responseType: 'text' as 'json'});
+
+
+  }
+
+  getPresentationTimes(): Observable<string> {
+    return this.httpClient.get<string>(this.presentationUrl, {responseType: 'text' as 'json'});
   }
 
     ngOnInit(){
+
       this.roomsearch= new FormGroup({
         checkin: new FormControl(' '),
         checkout: new FormControl(' ')
@@ -56,6 +65,14 @@ export class AppComponent implements OnInit{
         this.welcomeMessages = JSON.parse(response);
       }
     );
+
+    this.getPresentationTimes().subscribe(
+      (response) => {
+        this.presentationTimes$ = JSON.parse(response);
+      }
+    );
+
+
   }
 
     onSubmit({value,valid}:{value:Roomsearch,valid:boolean}){
@@ -95,7 +112,11 @@ export class AppComponent implements OnInit{
        return this.httpClient.get(this.baseURL + '/room/reservation/v1?checkin='+ this.currentCheckInVal + '&checkout='+this.currentCheckOutVal, {responseType: 'json'});
     }
 
-  }
+
+
+
+
+}
 
 
 
